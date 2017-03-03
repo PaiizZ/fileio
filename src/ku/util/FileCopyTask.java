@@ -23,7 +23,8 @@ import java.io.*;
  * includes files in your project's src/ directory.
  * It is a standard technique for opening resources.
  *
- * @author
+ * @author Wanchanapon Thanwaranurak
+ * @version 3/3/2017 AD.
  */
 public class FileCopyTask implements Runnable {
     /**
@@ -63,32 +64,19 @@ public class FileCopyTask implements Runnable {
      * @param args
      */
     public static void main(String[] args) {
-        final String inputFilename = "Big-Alice-in-Wonderland.txt";
+        final String inputFilename = "src/Big-Alice-in-Wonderland.txt";
 
-        // Define a FileUtil task to copy a file byte by byte.
-        // This is an anonymous class that extends FileUtilTimer.
-        //TODO Can you make this code shorter by passing the filenames
-        // as parameters to the superclass constructor?
-        FileCopyTask task1 = new FileCopyTask() {
-            public void run() {
-                FileUtil.copy(in, out);
-            }
-
-            public String toString() {
-                return "Copy a file byte-by-byte";
-            }
-        };
-        task1.setInput(inputFilename);
-        task1.setOutput("/tmp/filecopy1.txt");
-
+        CopyTask copyTask = new CopyTask(inputFilename, "src/filecopy1.txt");
+        ByteCopyTask byteCopyTask = new ByteCopyTask(inputFilename, "src/filecopy2.txt", Byte.SIZE);
+        ByteCopyTask byte6CopyTask = new ByteCopyTask(inputFilename, "src/filecopy3.txt", 4 * Byte.SIZE);
+        ByteCopyTask byte64CopyTask = new ByteCopyTask(inputFilename, "src/filecopy4.txt", 64 * Byte.SIZE);
+        LineCopyTask lineCopyTask = new LineCopyTask(inputFilename, "src/filecopy5.txt");
         TaskTimer timer = new TaskTimer();
-        timer.measureAndPrint(task1);  // wasn't that easy?
-
-        //TODO Define tasks for the other copy tests you need.
-
-        //TODO 'Avoid Magic Numbers' - some tasks require a blocksize
-        // for the copy method.  Don't write this as a number in the
-        // anonymous class!  Use a variable from the outer scope (here).
+        timer.measureAndPrint(copyTask);
+        timer.measureAndPrint(byteCopyTask);
+        timer.measureAndPrint(byte6CopyTask);
+        timer.measureAndPrint(byte64CopyTask);
+        timer.measureAndPrint(lineCopyTask);
     }
 
     /**
@@ -119,8 +107,7 @@ public class FileCopyTask implements Runnable {
         // then it returns null.  (No exception is thrown.)
         // If 'in' is null then throw a RuntimeException
         // so the caller will know that filename could not be opened.
-
-        //TODO If in (InputStream) is null, throw a RuntimeException with a message.
+        if (in != null) throw new RuntimeException("filename could not be opened " + filename);
     }
 
     /**
